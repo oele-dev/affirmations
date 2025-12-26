@@ -1698,3 +1698,162 @@ section {
         transform: none;
     }
 }
+
+/* =====================================================
+   ConvertKit Form Overrides
+   ===================================================== */
+
+/* Reset ConvertKit default styles */
+.formkit-form[data-uid="0c81849f72"] {
+    max-width: 100% !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.formkit-form[data-uid="0c81849f72"] * {
+    box-sizing: border-box;
+}
+
+/* Hide ConvertKit branding */
+.formkit-powered-by-convertkit-container,
+.formkit-powered-by-convertkit {
+    display: none !important;
+}
+
+/* Error alert styling */
+.formkit-alert {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+}
+
+.formkit-alert:empty {
+    display: none;
+}
+
+.formkit-alert-error {
+    color: #dc2626;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.formkit-alert-error li {
+    padding: 0.5rem 1rem;
+    background: rgba(220, 38, 38, 0.1);
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+}
+
+/* Success state styling */
+.formkit-form[data-uid="0c81849f72"] .formkit-alert-success {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius-md);
+    color: #059669;
+    font-weight: 500;
+}
+
+/* Form field overrides - ensure our styles take precedence */
+.formkit-form .email-input {
+    flex: 1;
+    padding: 0.875rem 1.25rem !important;
+    font-family: var(--font-body) !important;
+    font-size: 1rem !important;
+    color: var(--color-text) !important;
+    background: var(--color-bg-card) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius-full) !important;
+    outline: none !important;
+    transition: all var(--transition-base) !important;
+}
+
+@media (min-width: 640px) {
+    .formkit-form .form-group .email-input {
+        border: none !important;
+        background: transparent !important;
+    }
+}
+
+.formkit-form .email-input:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+@media (min-width: 640px) {
+    .formkit-form .form-group .email-input:focus {
+        box-shadow: none !important;
+    }
+}
+
+/* Button overrides */
+.formkit-form .btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.875rem 1.5rem !important;
+    font-family: var(--font-body) !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    border: none !important;
+    border-radius: var(--radius-full) !important;
+    cursor: pointer !important;
+    transition: all var(--transition-base) !important;
+    white-space: nowrap !important;
+}
+
+.formkit-form .btn-primary {
+    background: var(--gradient-primary) !important;
+    color: white !important;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3) !important;
+}
+
+.formkit-form .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Final CTA form overrides (on gradient background) */
+.final-form .form-group {
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.final-form .email-input {
+    background: transparent !important;
+    border: none !important;
+}
+
+.final-form .formkit-alert-error li {
+    background: rgba(255, 255, 255, 0.9);
+    color: #dc2626;
+}
+
+/* Spinner animation for submit button */
+.formkit-form .formkit-spinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.formkit-form .formkit-submit[data-active] .formkit-spinner {
+    display: flex;
+}
+
+.formkit-form .formkit-submit[data-active] > span {
+    opacity: 0;
+}
+
+/* Loading state */
+.formkit-form .formkit-submit[data-active] {
+    pointer-events: none;
+    opacity: 0.8;
+}

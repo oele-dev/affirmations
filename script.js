@@ -21,85 +21,33 @@
     }
 
     /**
-     * Handle Email Form Submission
-     * Validates email and shows success message
-     * Ready for backend integration (ConvertKit, Mailchimp, etc.)
+     * ConvertKit Form Enhancement
+     * Adds visual feedback and hides helper text on success
+     * ConvertKit handles the actual submission via their JS library
      */
-    function handleFormSubmit(form) {
-        const input = form.querySelector('.email-input');
-        const formGroup = form.querySelector('.form-group');
-        const successMessage = form.querySelector('.form-success');
-        const helper = form.querySelector('.form-helper');
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const email = input.value.trim();
-
-            // Remove previous error states
-            input.classList.remove('error');
-            input.setCustomValidity('');
-
-            // Validate email
-            if (!email) {
-                input.classList.add('error');
-                input.focus();
-                showError(input, 'Please enter your email address');
-                return;
-            }
-
-            if (!isValidEmail(email)) {
-                input.classList.add('error');
-                input.focus();
-                showError(input, 'Please enter a valid email address');
-                return;
-            }
-
-            // Simulate form submission
-            // TODO: Replace with actual API call to ConvertKit/Mailchimp
-            // Example:
-            // fetch('https://api.convertkit.com/v3/forms/YOUR_FORM_ID/subscribe', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email: email, api_key: 'YOUR_API_KEY' })
-            // })
-
-            // Show success state
-            formGroup.style.display = 'none';
-            if (helper) helper.style.display = 'none';
-            successMessage.hidden = false;
-
-            // Store email in localStorage for potential future use
-            try {
-                localStorage.setItem('affirmaudio_email', email);
-            } catch (e) {
-                // localStorage not available
-            }
+    function initConvertKitForms() {
+        // Watch for ConvertKit success message injection
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.classList && node.classList.contains('formkit-alert-success')) {
+                        // Hide the form helper text when success shows
+                        const form = node.closest('.formkit-form');
+                        if (form) {
+                            const helper = form.querySelector('.form-helper');
+                            if (helper) {
+                                helper.style.display = 'none';
+                            }
+                        }
+                    }
+                });
+            });
         });
-    }
 
-    /**
-     * Show Error Message
-     * Creates a temporary error message below the input
-     */
-    function showError(input, message) {
-        // Remove any existing error message
-        const existingError = input.parentElement.querySelector('.error-message');
-        if (existingError) {
-            existingError.remove();
-        }
-
-        // Add error styling
-        input.style.borderColor = '#dc2626';
-        input.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
-
-        // Reset on focus
-        input.addEventListener('focus', function resetError() {
-            input.style.borderColor = '';
-            input.style.boxShadow = '';
-            input.classList.remove('error');
-            input.removeEventListener('focus', resetError);
-        }, { once: true });
+        // Observe all ConvertKit forms for changes
+        document.querySelectorAll('.formkit-form').forEach(function(form) {
+            observer.observe(form, { childList: true, subtree: true });
+        });
     }
 
     /**
@@ -384,8 +332,8 @@
      * Initialize all features when DOM is ready
      */
     function init() {
-        // Initialize all email forms
-        document.querySelectorAll('.email-form').forEach(handleFormSubmit);
+        // Initialize ConvertKit form enhancements
+        initConvertKitForms();
 
         // Initialize other features
         initScrollAnimations();
