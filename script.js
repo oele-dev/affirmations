@@ -223,6 +223,164 @@
     }
 
     /**
+     * Countdown Timer
+     * Counts down to January 5, 2026 00:00:00 EST
+     *
+     * To test: Change LAUNCH_DATE to a date 5 minutes from now:
+     * const LAUNCH_DATE = new Date(Date.now() + 5 * 60 * 1000);
+     */
+    function initCountdown() {
+        // Launch date: January 5, 2026 at midnight EST (UTC-5)
+        // Using explicit timezone offset for consistency
+        const LAUNCH_DATE = new Date('2026-01-05T00:00:00-05:00');
+
+        // DOM Elements - Banner
+        const bannerEl = document.getElementById('countdown-banner');
+        const bannerDays = document.getElementById('banner-days');
+        const bannerHours = document.getElementById('banner-hours');
+        const bannerMinutes = document.getElementById('banner-minutes');
+        const bannerSeconds = document.getElementById('banner-seconds');
+
+        // DOM Elements - Hero
+        const heroEl = document.querySelector('.countdown-hero');
+        const heroDays = document.getElementById('hero-days');
+        const heroHours = document.getElementById('hero-hours');
+        const heroMinutes = document.getElementById('hero-minutes');
+        const heroSeconds = document.getElementById('hero-seconds');
+
+        // Check if elements exist
+        if (!bannerEl || !heroEl) return;
+
+        // Previous values for flip animation
+        let prevValues = { days: '', hours: '', minutes: '', seconds: '' };
+
+        /**
+         * Pad number with leading zero
+         */
+        function pad(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        /**
+         * Add flip animation to element if value changed
+         */
+        function animateIfChanged(element, newValue, key) {
+            if (prevValues[key] !== newValue) {
+                element.classList.add('flip');
+                setTimeout(function() {
+                    element.classList.remove('flip');
+                }, 300);
+                prevValues[key] = newValue;
+            }
+        }
+
+        /**
+         * Update countdown display
+         */
+        function updateCountdown() {
+            const now = new Date();
+            const diff = LAUNCH_DATE - now;
+
+            // If countdown is finished
+            if (diff <= 0) {
+                handleLaunched();
+                return false; // Stop the interval
+            }
+
+            // Calculate time units
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const paddedDays = pad(days);
+            const paddedHours = pad(hours);
+            const paddedMinutes = pad(minutes);
+            const paddedSeconds = pad(seconds);
+
+            // Update banner countdown
+            if (bannerDays) bannerDays.textContent = paddedDays;
+            if (bannerHours) bannerHours.textContent = paddedHours;
+            if (bannerMinutes) bannerMinutes.textContent = paddedMinutes;
+            if (bannerSeconds) {
+                animateIfChanged(bannerSeconds, paddedSeconds, 'seconds');
+                bannerSeconds.textContent = paddedSeconds;
+            }
+
+            // Update hero countdown
+            if (heroDays) heroDays.textContent = paddedDays;
+            if (heroHours) heroHours.textContent = paddedHours;
+            if (heroMinutes) heroMinutes.textContent = paddedMinutes;
+            if (heroSeconds) heroSeconds.textContent = paddedSeconds;
+
+            // Handle urgency states
+            const hoursRemaining = diff / (1000 * 60 * 60);
+
+            if (hoursRemaining <= 1) {
+                // Less than 1 hour - FINAL HOURS
+                bannerEl.classList.add('is-urgent');
+                heroEl.classList.add('is-urgent');
+
+                const titleEl = heroEl.querySelector('.countdown-title');
+                if (titleEl && !titleEl.dataset.urgent) {
+                    titleEl.textContent = 'FINAL HOURS!';
+                    titleEl.dataset.urgent = 'true';
+                }
+            } else if (hoursRemaining <= 24) {
+                // Less than 24 hours - urgent styling
+                bannerEl.classList.add('is-urgent');
+                heroEl.classList.add('is-urgent');
+            }
+
+            // Update aria-label for accessibility
+            const ariaLabel = 'Countdown timer to launch: ' + days + ' days, ' + hours + ' hours, ' + minutes + ' minutes, ' + seconds + ' seconds';
+            bannerEl.setAttribute('aria-label', ariaLabel);
+            heroEl.setAttribute('aria-label', ariaLabel);
+
+            return true; // Continue the interval
+        }
+
+        /**
+         * Handle when launch date has passed
+         */
+        function handleLaunched() {
+            // Update banner
+            bannerEl.classList.add('is-launched');
+            bannerEl.classList.remove('is-urgent');
+            const bannerTextEl = bannerEl.querySelector('.banner-text');
+            if (bannerTextEl) {
+                bannerTextEl.innerHTML = "🎉 We're Live! Get Your Tailored Affirmations Now";
+            }
+            const bannerCta = bannerEl.querySelector('.banner-cta');
+            if (bannerCta) {
+                bannerCta.textContent = '50% Off Today!';
+                bannerCta.style.display = 'inline-block';
+            }
+
+            // Update hero
+            heroEl.classList.add('is-launched');
+            heroEl.classList.remove('is-urgent');
+            const heroTitle = heroEl.querySelector('.countdown-title');
+            if (heroTitle) {
+                heroTitle.innerHTML = '🚀 LIVE NOW!';
+            }
+        }
+
+        // Initial update
+        const shouldContinue = updateCountdown();
+
+        // Update every second if countdown is still running
+        if (shouldContinue) {
+            const interval = setInterval(function() {
+                const continueRunning = updateCountdown();
+                if (!continueRunning) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+    }
+
+    /**
      * Initialize all features when DOM is ready
      */
     function init() {
@@ -235,6 +393,7 @@
         initFaqAccordion();
         initNavScroll();
         initWaveformAnimation();
+        initCountdown();
     }
 
     // Run initialization
