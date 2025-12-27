@@ -171,6 +171,182 @@
     }
 
     /**
+     * Custom Audio Player
+     * Handles play/pause, progress, and volume controls
+     */
+    function initAudioPlayer() {
+        const player = document.getElementById('audio-player');
+        const audio = document.getElementById('audio-element');
+        const playBtn = document.getElementById('play-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const totalTimeEl = document.getElementById('total-time');
+        const volumeBtn = document.getElementById('volume-btn');
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeBar = document.getElementById('volume-bar');
+
+        if (!audio || !player) return;
+
+        let isDragging = false;
+
+        /**
+         * Format time in M:SS format
+         */
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return mins + ':' + (secs < 10 ? '0' : '') + secs;
+        }
+
+        /**
+         * Toggle play/pause
+         */
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        /**
+         * Update play button icon
+         */
+        function updatePlayButton() {
+            const playIcon = playBtn.querySelector('.play-icon');
+            const pauseIcon = playBtn.querySelector('.pause-icon');
+
+            if (audio.paused) {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+                player.classList.remove('is-playing');
+                playBtn.setAttribute('aria-label', 'Play audio');
+            } else {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                player.classList.add('is-playing');
+                playBtn.setAttribute('aria-label', 'Pause audio');
+            }
+        }
+
+        /**
+         * Update progress bar
+         */
+        function updateProgress() {
+            if (!isDragging && audio.duration) {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = percent + '%';
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            }
+        }
+
+        /**
+         * Seek to position in track
+         */
+        function seek(e) {
+            const rect = progressContainer.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            audio.currentTime = percent * audio.duration;
+            progressBar.style.width = (percent * 100) + '%';
+        }
+
+        /**
+         * Update volume
+         */
+        function setVolume(e) {
+            const rect = volumeSlider.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            audio.volume = percent;
+            volumeBar.style.width = (percent * 100) + '%';
+            updateVolumeIcon();
+        }
+
+        /**
+         * Toggle mute
+         */
+        function toggleMute() {
+            audio.muted = !audio.muted;
+            updateVolumeIcon();
+        }
+
+        /**
+         * Update volume icon based on state
+         */
+        function updateVolumeIcon() {
+            const volumeIcon = volumeBtn.querySelector('.volume-icon');
+            const muteIcon = volumeBtn.querySelector('.mute-icon');
+
+            if (audio.muted || audio.volume === 0) {
+                volumeIcon.style.display = 'none';
+                muteIcon.style.display = 'block';
+            } else {
+                volumeIcon.style.display = 'block';
+                muteIcon.style.display = 'none';
+            }
+        }
+
+        // Event Listeners
+        playBtn.addEventListener('click', togglePlay);
+        audio.addEventListener('play', updatePlayButton);
+        audio.addEventListener('pause', updatePlayButton);
+        audio.addEventListener('timeupdate', updateProgress);
+
+        audio.addEventListener('loadedmetadata', function() {
+            totalTimeEl.textContent = formatTime(audio.duration);
+        });
+
+        audio.addEventListener('ended', function() {
+            audio.currentTime = 0;
+            progressBar.style.width = '0%';
+            updatePlayButton();
+        });
+
+        // Progress bar click/drag
+        progressContainer.addEventListener('click', seek);
+
+        progressContainer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            seek(e);
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                seek(e);
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+
+        // Volume controls
+        if (volumeBtn) {
+            volumeBtn.addEventListener('click', toggleMute);
+        }
+
+        if (volumeSlider) {
+            volumeSlider.addEventListener('click', setVolume);
+        }
+
+        // Keyboard controls
+        player.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            } else if (e.code === 'ArrowLeft') {
+                audio.currentTime = Math.max(0, audio.currentTime - 5);
+            } else if (e.code === 'ArrowRight') {
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+            }
+        });
+
+        // Make player focusable for keyboard controls
+        player.setAttribute('tabindex', '0');
+    }
+
+    /**
      * Countdown Timer
      * Counts down to January 5, 2026 00:00:00 EST
      *
@@ -341,6 +517,7 @@
         initFaqAccordion();
         initNavScroll();
         initWaveformAnimation();
+        initAudioPlayer();
         initCountdown();
     }
 
