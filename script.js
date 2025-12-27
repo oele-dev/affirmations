@@ -1,5 +1,5 @@
 /**
- * AffirmAudio Landing Page Scripts
+ * VoiceMyGoals Landing Page Scripts
  * Handles form validation, scroll animations, and interactive elements
  */
 

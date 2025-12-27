@@ -1,6 +1,6 @@
-# AffirmAudio Landing Page
+# VoiceMyGoals Landing Page
 
-A professional, conversion-focused landing page for AffirmAudio - a tool that converts personal affirmations into taylored audio files.
+A professional, conversion-focused landing page for VoiceMyGoals - a tool that converts personal affirmations into taylored audio files.
 
 ## Quick Start
 

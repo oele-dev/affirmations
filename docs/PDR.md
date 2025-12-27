@@ -1,7 +1,7 @@
 I need you to create a professional landing page for my product: a tool that converts personal affirmations into professional audio files.
 
 ## PRODUCT OVERVIEW:
-- Name: [Choose a simple name like "AffirmAudio" or "MyAffirmations" or suggest one]
+- Name: [Choose a simple name like "VoiceMyGoals" or "MyAffirmations" or suggest one]
 - Problem: Using generic affirmations don't seem to work because they're not about YOUR specific goals
 - Solution: Users paste their custom affirmations → get professional AI voice + 432Hz music → download MP3
 - Pricing: $2,99 one-time (early bird from $5)
@@ -166,7 +166,7 @@ Use the frontend-design skill.
 ## PLACEHOLDER CONTENT:
 
 - Sample audio player: Just a gray box with text "Sample audio will be embedded here"
-- Product name: Suggest 3 options or use "AffirmAudio" as placeholder
+- Product name: Suggest 3 options or use "VoiceMyGoals" as placeholder
 - Email counter: Start with "147 people" (I'll update manually)
 
 ## NICE TO HAVE (if time permits):
